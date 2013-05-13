@@ -434,8 +434,17 @@ namespace estimation
         if (self_diagnose_ && !diagnostics)
           ROS_WARN("Robot pose ekf diagnostics discovered a potential problem");
       }
-
-
+      // this is the loop so that filter doesnt run without odom
+      
+      if ( odom_active_ && !my_filter_.isInitialized()){
+        my_filter_.initialize(odom_meas_, odom_stamp_);
+        ROS_INFO("Kalman filter initialized with odom measurement");
+      }
+      else if ( vo_active_ && !my_filter_.isInitialized()){
+        my_filter_.initialize(vo_meas_, vo_stamp_);
+        ROS_INFO("Kalman filter initialized with vo measurement");
+      }
+      /*
       // initialize filer with odometry frame
       if (imu_active_ && gps_active_ && !my_filter_.isInitialized()) {
 	Quaternion q = imu_meas_.getRotation();
@@ -452,6 +461,7 @@ namespace estimation
         my_filter_.initialize(vo_meas_, vo_stamp_);
         ROS_INFO("Kalman filter initialized with vo measurement");
       }
+      */
     }
   };
 
